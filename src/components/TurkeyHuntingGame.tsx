@@ -3,6 +3,7 @@ import { Turkey } from "./Turkey";
 import { GameUI } from "./GameUI";
 import { GameOverScreen } from "./GameOverScreen";
 import { SimpleBackground } from "./SimpleBackground";
+import { EmailOptIn } from "./EmailOptIn";
 import { Button } from "./ui/button";
 
 export interface TurkeyType {
@@ -14,7 +15,7 @@ export interface TurkeyType {
 }
 
 export const TurkeyHuntingGame = () => {
-  const [gameState, setGameState] = useState<"menu" | "playing" | "gameOver">("menu");
+  const [gameState, setGameState] = useState<"emailOptIn" | "menu" | "playing" | "gameOver">("emailOptIn");
   const [turkeys, setTurkeys] = useState<TurkeyType[]>([]);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
@@ -97,6 +98,14 @@ export const TurkeyHuntingGame = () => {
     setShootAnimation(true);
     setTimeout(() => setShootAnimation(false), 200);
   };
+
+  const handleEmailOptInComplete = () => {
+    setGameState("menu");
+  };
+
+  if (gameState === "emailOptIn") {
+    return <EmailOptIn onComplete={handleEmailOptInComplete} />;
+  }
 
   if (gameState === "menu") {
     return (
