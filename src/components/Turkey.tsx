@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { TurkeyType } from "./TurkeyHuntingGame";
-import turkeyStanding from "../assets/turkey-realistic.png";
-import turkeyRunning from "../assets/turkey-running.png";
+import { AnimatedTurkey } from "./AnimatedTurkey";
 
 interface TurkeyProps {
   turkey: TurkeyType;
@@ -10,7 +9,6 @@ interface TurkeyProps {
 
 export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
   const [hitEffect, setHitEffect] = useState(false);
-  const [currentSprite, setCurrentSprite] = useState(turkeyStanding);
 
   const handleClick = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -19,17 +17,6 @@ export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
       setHitEffect(true);
     }
   };
-
-  // Animate turkey sprites
-  useEffect(() => {
-    if (turkey.hit) return;
-    
-    const spriteInterval = setInterval(() => {
-      setCurrentSprite(prev => prev === turkeyStanding ? turkeyRunning : turkeyStanding);
-    }, 300);
-
-    return () => clearInterval(spriteInterval);
-  }, [turkey.hit]);
 
   useEffect(() => {
     if (turkey.hit) {
@@ -45,24 +32,20 @@ export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
       <div
         className={`absolute cursor-crosshair transition-all duration-300 ${
           turkey.hit 
-            ? "animate-hit-effect" 
+            ? "opacity-70 scale-90" 
             : "hover:scale-110 hover:brightness-110"
         }`}
         style={{
           left: `${turkey.x}px`,
           top: `${turkey.y}px`,
-          transform: `scale(${turkey.hit ? 0.8 : 1})`,
-          filter: turkey.hit ? "grayscale(100%) brightness(0.5)" : "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))",
+          filter: turkey.hit ? "contrast(150%) saturate(50%)" : "drop-shadow(2px 2px 4px rgba(0,0,0,0.4))",
         }}
         onClick={handleClick}
       >
-        <img 
-          src={currentSprite}
-          alt="Turkey"
-          className="w-16 h-16 object-contain select-none"
-          style={{
-            imageRendering: "pixelated"
-          }}
+        <AnimatedTurkey 
+          isRunning={true} 
+          isHit={turkey.hit}
+          scale={0.8}
         />
       </div>
       
@@ -75,6 +58,18 @@ export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
           }}
         >
           +10
+        </div>
+      )}
+      
+      {turkey.hit && (
+        <div
+          className="absolute pointer-events-none animate-score-popup"
+          style={{
+            left: `${turkey.x + 15}px`,
+            top: `${turkey.y + 10}px`,
+          }}
+        >
+          <span className="text-2xl">💥</span>
         </div>
       )}
     </>
