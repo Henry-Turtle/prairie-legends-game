@@ -11,6 +11,7 @@ export interface TurkeyType {
   x: number;
   y: number;
   speed: number;
+  direction: 'left' | 'right' | 'up' | 'down' | 'diagonal-up' | 'diagonal-down';
   hit: boolean;
 }
 
@@ -27,16 +28,50 @@ export const TurkeyHuntingGame = () => {
     if (gameState !== "playing") return;
 
     const spawnInterval = setInterval(() => {
+      const directions = ['left', 'right', 'up', 'down', 'diagonal-up', 'diagonal-down'] as const;
+      const direction = directions[Math.floor(Math.random() * directions.length)];
+      
+      let x, y;
+      
+      // Spawn from different edges based on direction
+      switch (direction) {
+        case 'left':
+          x = window.innerWidth + 100;
+          y = Math.random() * (window.innerHeight - 200) + 100;
+          break;
+        case 'right':
+          x = -100;
+          y = Math.random() * (window.innerHeight - 200) + 100;
+          break;
+        case 'up':
+          x = Math.random() * (window.innerWidth - 200) + 100;
+          y = window.innerHeight + 100;
+          break;
+        case 'down':
+          x = Math.random() * (window.innerWidth - 200) + 100;
+          y = -100;
+          break;
+        case 'diagonal-up':
+          x = Math.random() < 0.5 ? -100 : window.innerWidth + 100;
+          y = window.innerHeight + 100;
+          break;
+        case 'diagonal-down':
+          x = Math.random() < 0.5 ? -100 : window.innerWidth + 100;
+          y = -100;
+          break;
+      }
+
       const newTurkey: TurkeyType = {
         id: turkeyIdCounter,
-        x: -100,
-        y: Math.random() * 300 + 100, // Random height between 100-400px from top
-        speed: Math.random() * 2 + 1, // Random speed between 1-3
+        x,
+        y,
+        speed: Math.random() * 3 + 2, // Random speed between 2-5
+        direction,
         hit: false,
       };
       setTurkeys(prev => [...prev, newTurkey]);
       setTurkeyIdCounter(prev => prev + 1);
-    }, Math.random() * 2000 + 1000); // Spawn every 1-3 seconds
+    }, Math.random() * 1500 + 800); // Spawn every 0.8-2.3 seconds
 
     return () => clearInterval(spawnInterval);
   }, [gameState, turkeyIdCounter]);
@@ -65,8 +100,42 @@ export const TurkeyHuntingGame = () => {
     const moveInterval = setInterval(() => {
       setTurkeys(prev => 
         prev
-          .map(turkey => ({ ...turkey, x: turkey.x + turkey.speed * 2 }))
-          .filter(turkey => turkey.x < window.innerWidth + 100 && !turkey.hit)
+          .map(turkey => {
+            let newX = turkey.x;
+            let newY = turkey.y;
+            
+            switch (turkey.direction) {
+              case 'left':
+                newX = turkey.x - turkey.speed * 2;
+                break;
+              case 'right':
+                newX = turkey.x + turkey.speed * 2;
+                break;
+              case 'up':
+                newY = turkey.y - turkey.speed * 2;
+                break;
+              case 'down':
+                newY = turkey.y + turkey.speed * 2;
+                break;
+              case 'diagonal-up':
+                newX = turkey.x < window.innerWidth / 2 ? turkey.x + turkey.speed * 1.5 : turkey.x - turkey.speed * 1.5;
+                newY = turkey.y - turkey.speed * 1.5;
+                break;
+              case 'diagonal-down':
+                newX = turkey.x < window.innerWidth / 2 ? turkey.x + turkey.speed * 1.5 : turkey.x - turkey.speed * 1.5;
+                newY = turkey.y + turkey.speed * 1.5;
+                break;
+            }
+            
+            return { ...turkey, x: newX, y: newY };
+          })
+          .filter(turkey => 
+            turkey.x > -150 && 
+            turkey.x < window.innerWidth + 150 && 
+            turkey.y > -150 && 
+            turkey.y < window.innerHeight + 150 && 
+            !turkey.hit
+          )
       );
     }, 16); // ~60fps
 

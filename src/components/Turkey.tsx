@@ -39,6 +39,9 @@ export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
           left: `${turkey.x}px`,
           top: `${turkey.y}px`,
           filter: turkey.hit ? "contrast(150%) saturate(50%)" : "drop-shadow(2px 2px 4px rgba(0,0,0,0.4))",
+          transform: turkey.direction === 'left' || turkey.direction === 'diagonal-up' && turkey.x > window.innerWidth / 2 || turkey.direction === 'diagonal-down' && turkey.x > window.innerWidth / 2 
+            ? "scaleX(-1)" 
+            : "scaleX(1)",
         }}
         onClick={handleClick}
       >
