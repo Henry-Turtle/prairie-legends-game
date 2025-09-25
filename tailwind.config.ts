@@ -47,6 +47,19 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Game-specific colors
+        forest: {
+          dark: "hsl(var(--forest-dark))",
+          light: "hsl(var(--forest-light))",
+        },
+        autumn: {
+          orange: "hsl(var(--autumn-orange))",
+          red: "hsl(var(--autumn-red))",
+          gold: "hsl(var(--autumn-gold))",
+        },
+        turkey: {
+          brown: "hsl(var(--turkey-brown))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -57,6 +70,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      backgroundImage: {
+        "gradient-forest": "var(--gradient-forest)",
+        "gradient-autumn": "var(--gradient-autumn)",
+        "gradient-score": "var(--gradient-score)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -80,10 +98,56 @@ export default {
             height: "0",
           },
         },
+        "turkey-fly": {
+          "0%": {
+            transform: "translateX(-100px) translateY(0px)",
+          },
+          "50%": {
+            transform: "translateX(50vw) translateY(-20px)",
+          },
+          "100%": {
+            transform: "translateX(calc(100vw + 100px)) translateY(10px)",
+          },
+        },
+        "crosshair-shoot": {
+          "0%": {
+            transform: "scale(1)",
+          },
+          "50%": {
+            transform: "scale(0.8)",
+          },
+          "100%": {
+            transform: "scale(1)",
+          },
+        },
+        "hit-effect": {
+          "0%": {
+            transform: "scale(1) rotate(0deg)",
+            opacity: "1",
+          },
+          "100%": {
+            transform: "scale(1.5) rotate(180deg)",
+            opacity: "0",
+          },
+        },
+        "score-popup": {
+          "0%": {
+            transform: "translateY(0) scale(1)",
+            opacity: "1",
+          },
+          "100%": {
+            transform: "translateY(-50px) scale(1.2)",
+            opacity: "0",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "turkey-fly": "turkey-fly 4s linear infinite",
+        "crosshair-shoot": "crosshair-shoot 0.2s ease-out",
+        "hit-effect": "hit-effect 0.5s ease-out forwards",
+        "score-popup": "score-popup 1s ease-out forwards",
       },
     },
   },
