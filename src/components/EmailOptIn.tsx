@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { z } from "zod";
+import prairieLegendsLogo from "../assets/prairie-legends-logo.png";
 
 const emailSchema = z.object({
   email: z.string().email("Please enter a valid email address").min(1, "Email is required")
@@ -48,12 +49,16 @@ export const EmailOptIn = ({ onComplete }: EmailOptInProps) => {
       
       <div className="relative z-10 flex items-center justify-center min-h-screen">
         <div className="text-center backdrop-blur-sm bg-white/90 rounded-2xl p-12 shadow-lg border border-amber-200 max-w-md w-full mx-4">
-          <div className="text-6xl mb-4">🦃</div>
+          <img 
+            src={prairieLegendsLogo} 
+            alt="Prairie Legends Logo" 
+            className="w-48 h-auto mx-auto mb-6"
+          />
           <h1 className="text-3xl font-bold text-gray-800 mb-4">
-            Turkey Hunt
+            Prairie Legends Turkey Hunt
           </h1>
           <p className="text-gray-600 mb-6">
-            Get exclusive hunting tips and game updates!
+            Enter your email to join the giveaway and join our hunting community!
           </p>
           
           <form onSubmit={handleSubmit} className="space-y-4">
