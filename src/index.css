@@ -57,11 +57,13 @@ All colors MUST be HSL.
     --gradient-forest: linear-gradient(180deg, hsl(var(--forest-mid)), hsl(var(--forest-dark)), hsl(var(--forest-deep)));
     --gradient-autumn: linear-gradient(135deg, hsl(var(--autumn-orange)), hsl(var(--autumn-red)), hsl(var(--autumn-crimson)));
     --gradient-score: linear-gradient(90deg, hsl(var(--autumn-gold)), hsl(var(--autumn-orange)));
-    --gradient-card: linear-gradient(135deg, hsl(var(--card) / 0.9), hsl(var(--card) / 0.7));
+    --gradient-card: linear-gradient(135deg, hsl(var(--card) / 0.95), hsl(var(--card) / 0.85));
+    --gradient-radial: radial-gradient(circle at center, hsl(var(--sky-dawn) / 0.3) 0%, transparent 70%);
     
-    /* Shadows */
-    --shadow-soft: 0 4px 20px hsl(var(--forest-deep) / 0.3);
-    --shadow-glow: 0 0 30px hsl(var(--autumn-gold) / 0.2);
+    /* Enhanced Shadows */
+    --shadow-soft: 0 8px 32px hsl(var(--forest-deep) / 0.4);
+    --shadow-glow: 0 0 40px hsl(var(--autumn-gold) / 0.3);
+    --shadow-intense: 0 0 60px hsl(var(--autumn-gold) / 0.5);
 
     --radius: 0.75rem;
 

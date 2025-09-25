@@ -88,10 +88,12 @@ export default {
         "gradient-autumn": "var(--gradient-autumn)",
         "gradient-score": "var(--gradient-score)",
         "gradient-card": "var(--gradient-card)",
+        "gradient-radial": "var(--gradient-radial)",
       },
       boxShadow: {
         "soft": "var(--shadow-soft)",
         "glow": "var(--shadow-glow)",
+        "intense": "var(--shadow-intense)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -204,6 +206,39 @@ export default {
             opacity: "0",
           },
         },
+        "screen-shake": {
+          "0%, 100%": {
+            transform: "translate3d(0, 0, 0)",
+          },
+          "10%, 30%, 50%, 70%, 90%": {
+            transform: "translate3d(-2px, -1px, 0)",
+          },
+          "20%, 40%, 60%, 80%": {
+            transform: "translate3d(2px, 1px, 0)",
+          },
+        },
+        "crosshair-pulse": {
+          "0%, 100%": {
+            boxShadow: "0 0 0 0 hsl(var(--autumn-gold) / 0.7)",
+          },
+          "50%": {
+            boxShadow: "0 0 0 8px hsl(var(--autumn-gold) / 0)",
+          },
+        },
+        "muzzle-flash": {
+          "0%": {
+            opacity: "0",
+            transform: "scale(0.5)",
+          },
+          "50%": {
+            opacity: "1",
+            transform: "scale(1.5)",
+          },
+          "100%": {
+            opacity: "0",
+            transform: "scale(0.8)",
+          },
+        },
         "cloud-drift": {
           "0%": {
             transform: "translateX(-20px)",
@@ -223,6 +258,9 @@ export default {
         "score-popup": "score-popup 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
         "leaf-fall": "leaf-fall 8s linear infinite",
         "cloud-drift": "cloud-drift 20s linear infinite",
+        "screen-shake": "screen-shake 0.3s ease-in-out",
+        "crosshair-pulse": "crosshair-pulse 1.5s ease-out infinite",
+        "muzzle-flash": "muzzle-flash 0.2s ease-out",
       },
     },
   },
