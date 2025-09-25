@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Turkey } from "./Turkey";
 import { GameUI } from "./GameUI";
 import { GameOverScreen } from "./GameOverScreen";
+import { BackgroundElements } from "./BackgroundElements";
 import { Button } from "./ui/button";
 
 export interface TurkeyType {
@@ -99,19 +100,24 @@ export const TurkeyHuntingGame = () => {
 
   if (gameState === "menu") {
     return (
-      <div className="min-h-screen bg-gradient-forest flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-6xl font-bold text-foreground mb-8">🦃 Turkey Hunt</h1>
-          <p className="text-xl text-muted-foreground mb-8">
-            Click on the turkeys as they fly across the screen!
-          </p>
-          <Button 
-            onClick={startGame}
-            size="lg"
-            className="bg-gradient-autumn text-foreground hover:scale-105 transition-transform"
-          >
-            Start Hunting
-          </Button>
+      <div className="min-h-screen bg-gradient-sky relative overflow-hidden">
+        <BackgroundElements />
+        <div className="relative z-10 flex items-center justify-center min-h-screen">
+          <div className="text-center backdrop-blur-sm bg-gradient-card rounded-3xl p-12 shadow-glow border border-border/30">
+            <h1 className="text-8xl font-bold bg-gradient-autumn bg-clip-text text-transparent mb-6 drop-shadow-glow">
+              🦃 Turkey Hunt
+            </h1>
+            <p className="text-2xl text-foreground/90 mb-10 font-medium">
+              Test your aim as turkeys soar across the autumn sky!
+            </p>
+            <Button 
+              onClick={startGame}
+              size="lg"
+              className="bg-gradient-autumn text-white font-bold text-lg px-12 py-6 hover:scale-110 transition-all duration-300 shadow-glow border-0 rounded-xl"
+            >
+              🏹 Start Hunting
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -123,12 +129,14 @@ export const TurkeyHuntingGame = () => {
 
   return (
     <div 
-      className={`min-h-screen bg-gradient-forest overflow-hidden relative ${
+      className={`min-h-screen bg-gradient-sky overflow-hidden relative transition-all duration-150 ${
         shootAnimation ? "animate-crosshair-shoot" : ""
       }`}
       onClick={handleGameClick}
       style={{ cursor: "crosshair" }}
     >
+      <BackgroundElements />
+      
       <GameUI score={score} timeLeft={timeLeft} />
       
       {turkeys.map(turkey => (
@@ -139,8 +147,9 @@ export const TurkeyHuntingGame = () => {
         />
       ))}
       
-      {/* Forest silhouette overlay */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-forest-dark to-transparent pointer-events-none" />
+      {/* Enhanced Forest Silhouette */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-forest pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-forest-deep via-forest-dark/80 to-transparent pointer-events-none" />
     </div>
   );
 };

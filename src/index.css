@@ -8,49 +8,62 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Autumn Hunting Theme */
-    --background: 25 15% 8%;
-    --foreground: 30 25% 95%;
+    /* Enhanced Autumn Hunting Theme */
+    --background: 220 25% 6%;
+    --foreground: 45 15% 96%;
 
-    --card: 20 20% 12%;
-    --card-foreground: 30 25% 95%;
+    --card: 220 20% 8%;
+    --card-foreground: 45 15% 96%;
 
-    --popover: 20 20% 12%;
-    --popover-foreground: 30 25% 95%;
+    --popover: 220 20% 8%;
+    --popover-foreground: 45 15% 96%;
 
-    --primary: 25 65% 45%;
-    --primary-foreground: 30 25% 95%;
+    --primary: 45 85% 65%;
+    --primary-foreground: 220 25% 6%;
 
-    --secondary: 120 25% 25%;
-    --secondary-foreground: 30 25% 95%;
+    --secondary: 120 35% 20%;
+    --secondary-foreground: 45 15% 96%;
 
-    --muted: 20 20% 20%;
-    --muted-foreground: 30 15% 70%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 45 10% 75%;
 
-    --accent: 35 80% 55%;
-    --accent-foreground: 25 15% 8%;
+    --accent: 25 90% 65%;
+    --accent-foreground: 220 25% 6%;
 
-    --destructive: 0 75% 55%;
-    --destructive-foreground: 30 25% 95%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 45 15% 96%;
 
-    --border: 20 20% 25%;
-    --input: 20 20% 25%;
-    --ring: 25 65% 45%;
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 45 85% 65%;
 
-    /* Game specific colors */
-    --forest-dark: 120 40% 15%;
+    /* Enhanced Game Colors */
+    --forest-deep: 140 45% 8%;
+    --forest-dark: 130 40% 12%;
+    --forest-mid: 125 35% 18%;
     --forest-light: 120 30% 25%;
-    --autumn-orange: 25 85% 60%;
-    --autumn-red: 10 75% 55%;
-    --autumn-gold: 45 90% 65%;
-    --turkey-brown: 20 50% 35%;
+    --sky-dawn: 200 60% 85%;
+    --sky-dusk: 220 40% 70%;
+    --autumn-orange: 25 90% 65%;
+    --autumn-red: 15 85% 60%;
+    --autumn-gold: 45 95% 70%;
+    --autumn-crimson: 5 80% 55%;
+    --turkey-brown: 25 60% 40%;
+    --leaf-green: 95 40% 45%;
+    --leaf-yellow: 50 80% 60%;
 
-    /* Gradients */
-    --gradient-forest: linear-gradient(180deg, hsl(var(--forest-light)), hsl(var(--forest-dark)));
-    --gradient-autumn: linear-gradient(135deg, hsl(var(--autumn-orange)), hsl(var(--autumn-red)));
+    /* Enhanced Gradients */
+    --gradient-sky: linear-gradient(180deg, hsl(var(--sky-dawn)) 0%, hsl(var(--sky-dusk)) 40%, hsl(var(--forest-light)) 100%);
+    --gradient-forest: linear-gradient(180deg, hsl(var(--forest-mid)), hsl(var(--forest-dark)), hsl(var(--forest-deep)));
+    --gradient-autumn: linear-gradient(135deg, hsl(var(--autumn-orange)), hsl(var(--autumn-red)), hsl(var(--autumn-crimson)));
     --gradient-score: linear-gradient(90deg, hsl(var(--autumn-gold)), hsl(var(--autumn-orange)));
+    --gradient-card: linear-gradient(135deg, hsl(var(--card) / 0.9), hsl(var(--card) / 0.7));
+    
+    /* Shadows */
+    --shadow-soft: 0 4px 20px hsl(var(--forest-deep) / 0.3);
+    --shadow-glow: 0 0 30px hsl(var(--autumn-gold) / 0.2);
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
