@@ -65,13 +65,13 @@ export const TurkeyHuntingGame = () => {
         id: turkeyIdCounter,
         x,
         y,
-        speed: Math.random() * 3 + 2, // Random speed between 2-5
+        speed: Math.random() * 1.5 + 0.8, // Random speed between 0.8-2.3
         direction,
         hit: false,
       };
       setTurkeys(prev => [...prev, newTurkey]);
       setTurkeyIdCounter(prev => prev + 1);
-    }, Math.random() * 1500 + 800); // Spawn every 0.8-2.3 seconds
+    }, Math.random() * 1000 + 600); // Spawn every 0.6-1.6 seconds
 
     return () => clearInterval(spawnInterval);
   }, [gameState, turkeyIdCounter]);
@@ -130,10 +130,10 @@ export const TurkeyHuntingGame = () => {
             return { ...turkey, x: newX, y: newY };
           })
           .filter(turkey => 
-            turkey.x > -150 && 
-            turkey.x < window.innerWidth + 150 && 
-            turkey.y > -150 && 
-            turkey.y < window.innerHeight + 150 && 
+            turkey.x > -200 && 
+            turkey.x < window.innerWidth + 200 && 
+            turkey.y > -200 && 
+            turkey.y < window.innerHeight + 200 && 
             !turkey.hit
           )
       );

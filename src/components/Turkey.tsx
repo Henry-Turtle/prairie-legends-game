@@ -48,7 +48,7 @@ export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
         <AnimatedTurkey 
           isRunning={true} 
           isHit={turkey.hit}
-          scale={0.8}
+          scale={1.2}
         />
       </div>
       
