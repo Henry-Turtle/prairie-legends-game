@@ -119,22 +119,10 @@ export default {
         },
         "turkey-fly": {
           "0%": {
-            transform: "translateX(-120px) translateY(0px) rotate(-5deg) scale(1)",
-          },
-          "20%": {
-            transform: "translateX(20vw) translateY(-15px) rotate(2deg) scale(1.05)",
-          },
-          "40%": {
-            transform: "translateX(40vw) translateY(-8px) rotate(-1deg) scale(1)",
-          },
-          "60%": {
-            transform: "translateX(60vw) translateY(-20px) rotate(3deg) scale(1.05)",
-          },
-          "80%": {
-            transform: "translateX(80vw) translateY(-5px) rotate(-2deg) scale(1)",
+            transform: "translateX(-120px) scaleX(-1)",
           },
           "100%": {
-            transform: "translateX(calc(100vw + 120px)) translateY(10px) rotate(0deg) scale(1)",
+            transform: "translateX(calc(100vw + 120px)) scaleX(-1)",
           },
         },
         "turkey-idle": {
@@ -251,8 +239,7 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "turkey-fly": "turkey-fly 4s ease-in-out infinite",
-        "turkey-idle": "turkey-idle 2s ease-in-out infinite",
+        "turkey-fly": "turkey-fly 4s linear infinite",
         "crosshair-shoot": "crosshair-shoot 0.15s ease-out",
         "hit-effect": "hit-effect 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
         "score-popup": "score-popup 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
