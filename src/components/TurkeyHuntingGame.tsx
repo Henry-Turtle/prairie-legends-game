@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Turkey } from "./Turkey";
 import { GameUI } from "./GameUI";
 import { GameOverScreen } from "./GameOverScreen";
@@ -23,18 +23,15 @@ export const TurkeyHuntingGame = () => {
   const [turkeyIdCounter, setTurkeyIdCounter] = useState(0);
   const [shootAnimation, setShootAnimation] = useState(false);
 
+  const timeLeftRef = useRef(timeLeft);
+  useEffect(() => { timeLeftRef.current = timeLeft; }, [timeLeft]);
+
   // Spawn turkeys based on time remaining - increases as game progresses
   useEffect(() => {
     if (gameState !== "playing") return;
 
-    // Determine turkeys per second based on time remaining
-    let turkeysPerSecond = 0.5;
-    if (timeLeft > 50) turkeysPerSecond = 0.5;    // First 10s: 0.5 per second
-    else if (timeLeft > 40) turkeysPerSecond = 1; // Next 10s: 1 per second
-    else if (timeLeft > 30) turkeysPerSecond = 1.5; // Next 10s: 1.5 per second
-    else turkeysPerSecond = 3;                    // Final 30s: 3 per second
-
-    const spawnInterval = 1000 / turkeysPerSecond;
+    let cancelled = false;
+    let timeoutId: number | undefined;
 
     const createTurkey = () => {
       const directions = ['left', 'right', 'up', 'down', 'diagonal-up', 'diagonal-down'] as const;
@@ -83,10 +80,34 @@ export const TurkeyHuntingGame = () => {
       setTurkeys(prev => [...prev, newTurkey]);
     };
 
-    const spawnTimer = setInterval(createTurkey, spawnInterval);
+    const scheduleNext = () => {
+      if (cancelled) return;
 
-    return () => clearInterval(spawnTimer);
-  }, [gameState, timeLeft]);
+      // Determine turkeys per second based on current time remaining
+      const tl = timeLeftRef.current;
+      let turkeysPerSecond = 0.5;
+      if (tl > 50) turkeysPerSecond = 0.5;    // First 10s: 0.5 per second
+      else if (tl > 40) turkeysPerSecond = 1; // Next 10s: 1 per second
+      else if (tl > 30) turkeysPerSecond = 1.5; // Next 10s: 1.5 per second
+      else turkeysPerSecond = 3;                    // Final 30s: 3 per second
+
+      const delay = 1000 / turkeysPerSecond;
+
+      timeoutId = window.setTimeout(() => {
+        if (cancelled) return;
+        createTurkey();
+        scheduleNext();
+      }, delay);
+    };
+
+    scheduleNext();
+
+    return () => {
+      cancelled = true;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [gameState]);
+
 
   // Game timer
   useEffect(() => {
