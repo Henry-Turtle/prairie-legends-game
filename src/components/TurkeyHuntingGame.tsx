@@ -109,10 +109,6 @@ export const TurkeyHuntingGame = () => {
 
     const moveInterval = setInterval(() => {
       setTurkeys(prev => {
-        // Limit max turkeys on screen for performance
-        const maxTurkeys = 20;
-        const activeTurkeys = prev.filter(t => !t.hit);
-        
         return prev
           .map(turkey => {
             // Skip movement calculations for hit turkeys (they'll be removed)
@@ -157,8 +153,7 @@ export const TurkeyHuntingGame = () => {
             }
             
             return true;
-          })
-          .slice(-maxTurkeys); // Keep only the most recent turkeys if over limit
+          });
       });
     }, 20); // Slightly lower frame rate (50fps) for better performance
 
