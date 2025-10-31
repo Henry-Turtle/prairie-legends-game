@@ -106,55 +106,60 @@ export const TurkeyHuntingGame = () => {
   useEffect(() => {
     if (gameState !== "playing") return;
 
+    // Cache window dimensions to avoid repeated property access
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    const buffer = 150;
+
     const moveInterval = setInterval(() => {
       setTurkeys(prev => {
-        return prev
-          .map(turkey => {
-            // Skip movement calculations for hit turkeys (they'll be removed)
-            if (turkey.hit) return turkey;
-            
-            let newX = turkey.x;
-            let newY = turkey.y;
-            
-            switch (turkey.direction) {
-              case 'left':
-                newX = turkey.x - turkey.speed * 2;
-                break;
-              case 'right':
-                newX = turkey.x + turkey.speed * 2;
-                break;
-              case 'up':
-                newY = turkey.y - turkey.speed * 2;
-                break;
-              case 'down':
-                newY = turkey.y + turkey.speed * 2;
-                break;
-              case 'diagonal-up':
-                newX = turkey.x < window.innerWidth / 2 ? turkey.x + turkey.speed * 1.5 : turkey.x - turkey.speed * 1.5;
-                newY = turkey.y - turkey.speed * 1.5;
-                break;
-              case 'diagonal-down':
-                newX = turkey.x < window.innerWidth / 2 ? turkey.x + turkey.speed * 1.5 : turkey.x - turkey.speed * 1.5;
-                newY = turkey.y + turkey.speed * 1.5;
-                break;
-            }
-            
-            return { ...turkey, x: newX, y: newY };
-          })
-          .filter(turkey => {
-            // Remove hit turkeys immediately
-            if (turkey.hit) return false;
-            
-            // Remove turkeys that are off-screen (with smaller buffer)
-            if (turkey.x < -150 || turkey.x > window.innerWidth + 150 || 
-                turkey.y < -150 || turkey.y > window.innerHeight + 150) {
-              return false;
-            }
-            
-            return true;
-          });
+        const updated: TurkeyType[] = [];
+        
+        for (let i = 0; i < prev.length; i++) {
+          const turkey = prev[i];
+          
+          // Skip hit turkeys - they'll be removed
+          if (turkey.hit) continue;
+          
+          let newX = turkey.x;
+          let newY = turkey.y;
+          const speedX = turkey.speed * 2;
+          const speedDiag = turkey.speed * 1.5;
+          
+          // Calculate new position based on direction
+          switch (turkey.direction) {
+            case 'left':
+              newX -= speedX;
+              break;
+            case 'right':
+              newX += speedX;
+              break;
+            case 'up':
+              newY -= speedX;
+              break;
+            case 'down':
+              newY += speedX;
+              break;
+            case 'diagonal-up':
+              newX += turkey.x < screenWidth / 2 ? speedDiag : -speedDiag;
+              newY -= speedDiag;
+              break;
+            case 'diagonal-down':
+              newX += turkey.x < screenWidth / 2 ? speedDiag : -speedDiag;
+              newY += speedDiag;
+              break;
+          }
+          
+          // Only keep if still on screen (with buffer)
+          if (newX > -buffer && newX < screenWidth + buffer && 
+              newY > -buffer && newY < screenHeight + buffer) {
+            updated.push({ ...turkey, x: newX, y: newY });
+          }
+        }
+        
+        return updated;
       });
-    }, 20); // Slightly lower frame rate (50fps) for better performance
+    }, 33); // 30fps for better performance
 
     return () => clearInterval(moveInterval);
   }, [gameState]);
