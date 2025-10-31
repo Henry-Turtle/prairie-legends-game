@@ -135,13 +135,10 @@ export default {
         },
         "crosshair-shoot": {
           "0%": {
-            transform: "scale(1)",
-          },
-          "30%": {
-            transform: "scale(0.85)",
+            backgroundColor: "hsl(0 85% 50% / 0.3)",
           },
           "100%": {
-            transform: "scale(1)",
+            backgroundColor: "hsl(0 85% 50% / 0)",
           },
         },
         "hit-effect": {
@@ -240,7 +237,7 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "turkey-fly": "turkey-fly 4s linear infinite",
-        "crosshair-shoot": "crosshair-shoot 0.15s ease-out",
+        "crosshair-shoot": "crosshair-shoot 1s ease-out",
         "hit-effect": "hit-effect 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
         "score-popup": "score-popup 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
         "leaf-fall": "leaf-fall 8s linear infinite",

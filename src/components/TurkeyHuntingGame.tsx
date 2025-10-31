@@ -181,14 +181,14 @@ export const TurkeyHuntingGame = () => {
     );
     setScore(prev => prev + 10);
     setShootAnimation(true);
-    setTimeout(() => setShootAnimation(false), 200);
+    setTimeout(() => setShootAnimation(false), 1000);
   }, []);
 
   const handleGameClick = (event: React.MouseEvent) => {
     if (gameState !== "playing") return;
     
     setShootAnimation(true);
-    setTimeout(() => setShootAnimation(false), 200);
+    setTimeout(() => setShootAnimation(false), 1000);
   };
 
   const handleEmailOptInComplete = () => {
@@ -239,12 +239,14 @@ export const TurkeyHuntingGame = () => {
 
   return (
     <div 
-      className={`min-h-screen bg-gradient-sky overflow-hidden relative ${
-        shootAnimation ? "animate-crosshair-shoot" : ""
-      }`}
+      className="min-h-screen bg-gradient-sky overflow-hidden relative"
       onClick={handleGameClick}
       style={{ cursor: "crosshair" }}
     >
+      {shootAnimation && (
+        <div className="fixed inset-0 pointer-events-none z-50 animate-crosshair-shoot" 
+             style={{ mixBlendMode: "color-dodge" }} />
+      )}
       <SimpleBackground />
       
       <GameUI score={score} timeLeft={timeLeft} onReset={handleReset} />
