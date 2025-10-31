@@ -80,7 +80,7 @@ export const TurkeyHuntingGame = () => {
     }, spawnDelay);
 
     return () => clearTimeout(spawnTimeout);
-  }, [gameState, turkeyIdCounter, timeLeft]);
+  }, [gameState, turkeys.length]); // Only re-trigger when a turkey is successfully added
 
   // Game timer
   useEffect(() => {
