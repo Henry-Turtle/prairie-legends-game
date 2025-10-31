@@ -109,7 +109,7 @@ export const TurkeyHuntingGame = () => {
     // Cache window dimensions to avoid repeated property access
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    const buffer = 200; // Increased buffer to accommodate spawn positions
+    const buffer = 150; // Buffer to accommodate spawn at 100px and ensure prompt despawn
 
     const moveInterval = setInterval(() => {
       setTurkeys(prev => {
