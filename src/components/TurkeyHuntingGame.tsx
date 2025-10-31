@@ -34,6 +34,7 @@ export const TurkeyHuntingGame = () => {
 
     let cancelled = false;
     const timeoutIds: number[] = [];
+    const activeSpawners = new Map<string, boolean>();
 
     const createTurkey = (type: 'normal' | 'yellow' | 'green') => {
       const directions = ['left', 'right', 'up', 'down', 'diagonal-up', 'diagonal-down'] as const;
@@ -95,6 +96,9 @@ export const TurkeyHuntingGame = () => {
     };
 
     const scheduleSpawns = (turkeyType: 'normal' | 'yellow' | 'green', perSecond: number) => {
+      if (activeSpawners.has(turkeyType)) return;
+      activeSpawners.set(turkeyType, true);
+      
       const delay = 1000 / perSecond;
       
       const spawn = () => {
@@ -104,32 +108,52 @@ export const TurkeyHuntingGame = () => {
         timeoutIds.push(id);
       };
       
-      const id = window.setTimeout(spawn, delay);
-      timeoutIds.push(id);
+      spawn(); // Start immediately
     };
 
-    // Determine spawn rates based on time remaining
-    const tl = timeLeftRef.current;
-    
-    if (tl > 40) {
-      // First 20 seconds: Normal at 1/sec
-      scheduleSpawns('normal', 1);
-    } else if (tl > 20) {
-      // Next 20 seconds: Normal at 1/sec + Yellow at 0.5/sec
-      scheduleSpawns('normal', 1);
-      scheduleSpawns('yellow', 0.5);
-    } else {
-      // Last 20 seconds: Normal at 2/sec + Yellow at 0.5/sec + Green at 0.5/sec
-      scheduleSpawns('normal', 2);
-      scheduleSpawns('yellow', 0.5);
-      scheduleSpawns('green', 0.5);
-    }
+    const stopSpawner = (turkeyType: 'normal' | 'yellow' | 'green') => {
+      activeSpawners.delete(turkeyType);
+    };
+
+    // Check time and adjust spawners
+    const checkAndAdjust = () => {
+      if (cancelled) return;
+      
+      const tl = timeLeftRef.current;
+      
+      if (tl > 40) {
+        // First 20 seconds: Normal at 1/sec
+        scheduleSpawns('normal', 1);
+      } else if (tl > 20) {
+        // Next 20 seconds: Normal at 1/sec + Yellow at 0.5/sec
+        scheduleSpawns('normal', 1);
+        scheduleSpawns('yellow', 0.5);
+      } else if (tl > 0) {
+        // Last 20 seconds: need to restart normal spawner at higher rate
+        // Stop all and restart with new rates
+        const wasActive = activeSpawners.has('normal');
+        activeSpawners.clear();
+        timeoutIds.forEach(id => clearTimeout(id));
+        timeoutIds.length = 0;
+        
+        scheduleSpawns('normal', 2);
+        scheduleSpawns('yellow', 0.5);
+        scheduleSpawns('green', 0.5);
+      }
+      
+      if (!cancelled) {
+        const id = window.setTimeout(checkAndAdjust, 1000);
+        timeoutIds.push(id);
+      }
+    };
+
+    checkAndAdjust();
 
     return () => {
       cancelled = true;
       timeoutIds.forEach(id => clearTimeout(id));
     };
-  }, [gameState, timeLeft]);
+  }, [gameState]);
 
 
   // Game timer
