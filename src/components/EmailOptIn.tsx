@@ -38,8 +38,20 @@ export const EmailOptIn = ({ onComplete }: EmailOptInProps) => {
     
     setIsLoading(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      await fetch("https://services.leadconnectorhq.com/hooks/u5DJopZzzPBRLF3JmMOL/webhook-trigger/181cfffb-ad45-4bed-b951-eb7e8140f8ad", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          full_name: fullName,
+          email: email,
+        }),
+      });
+    } catch (error) {
+      console.error("Webhook error:", error);
+    }
     
     setIsLoading(false);
     onComplete();
