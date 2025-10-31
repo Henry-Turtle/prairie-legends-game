@@ -70,14 +70,17 @@ export const TurkeyHuntingGame = () => {
           break;
       }
 
-      setTurkeys(prev => [...prev, {
+      const newTurkey = {
         id: Date.now() + Math.random(), // Unique ID
         x,
         y,
         speed: Math.random() * 1.5 + 0.8,
         direction,
         hit: false,
-      }]);
+      };
+      
+      console.log('Spawning turkey:', newTurkey);
+      setTurkeys(prev => [...prev, newTurkey]);
     };
 
     const spawnTimer = setInterval(createTurkey, spawnInterval);
@@ -154,6 +157,8 @@ export const TurkeyHuntingGame = () => {
           if (newX > -buffer && newX < screenWidth + buffer && 
               newY > -buffer && newY < screenHeight + buffer) {
             updated.push({ ...turkey, x: newX, y: newY });
+          } else {
+            console.log('Despawning turkey:', turkey.id, 'at', newX, newY);
           }
         }
         
