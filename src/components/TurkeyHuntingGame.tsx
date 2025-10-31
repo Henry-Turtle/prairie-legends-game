@@ -109,7 +109,7 @@ export const TurkeyHuntingGame = () => {
     // Cache window dimensions to avoid repeated property access
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    const buffer = 150;
+    const buffer = 200; // Increased buffer to accommodate spawn positions
 
     const moveInterval = setInterval(() => {
       setTurkeys(prev => {
@@ -150,7 +150,7 @@ export const TurkeyHuntingGame = () => {
               break;
           }
           
-          // Only keep if still on screen (with buffer)
+          // Only keep if still on screen (with buffer for spawn positions)
           if (newX > -buffer && newX < screenWidth + buffer && 
               newY > -buffer && newY < screenHeight + buffer) {
             updated.push({ ...turkey, x: newX, y: newY });
