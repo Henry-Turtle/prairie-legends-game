@@ -23,17 +23,21 @@ export const TurkeyHuntingGame = () => {
   const [turkeyIdCounter, setTurkeyIdCounter] = useState(0);
   const [shootAnimation, setShootAnimation] = useState(false);
 
-  // Spawn turkeys at random intervals - increases as game progresses
+  // Spawn turkeys based on time remaining - increases as game progresses
   useEffect(() => {
     if (gameState !== "playing") return;
 
-    // Calculate spawn delay based on time remaining (gets faster as time decreases)
-    const progressRatio = timeLeft / 60; // 1.0 at start, 0.0 at end
-    const baseDelay = 600 + (progressRatio * 1400); // 2000ms at start, 600ms at end
-    const randomVariation = Math.random() * 400; // Add some randomness
-    const spawnDelay = baseDelay + randomVariation;
+    // Determine turkeys per second based on time remaining
+    let turkeysPerSecond = 1;
+    if (timeLeft > 50) turkeysPerSecond = 1;      // First 10s: 1 per second
+    else if (timeLeft > 40) turkeysPerSecond = 2; // Next 10s: 2 per second
+    else if (timeLeft > 30) turkeysPerSecond = 3; // Next 10s: 3 per second
+    else if (timeLeft > 20) turkeysPerSecond = 4; // Next 10s: 4 per second
+    else turkeysPerSecond = 5;                    // Final 20s: 5 per second
 
-    const spawnTimeout = setTimeout(() => {
+    const spawnInterval = 1000 / turkeysPerSecond;
+
+    const createTurkey = () => {
       const directions = ['left', 'right', 'up', 'down', 'diagonal-up', 'diagonal-down'] as const;
       const direction = directions[Math.floor(Math.random() * directions.length)];
       
@@ -67,20 +71,20 @@ export const TurkeyHuntingGame = () => {
           break;
       }
 
-      const newTurkey: TurkeyType = {
-        id: turkeyIdCounter,
+      setTurkeys(prev => [...prev, {
+        id: Date.now() + Math.random(), // Unique ID
         x,
         y,
-        speed: Math.random() * 1.5 + 0.8, // Random speed between 0.8-2.3
+        speed: Math.random() * 1.5 + 0.8,
         direction,
         hit: false,
-      };
-      setTurkeys(prev => [...prev, newTurkey]);
-      setTurkeyIdCounter(prev => prev + 1);
-    }, spawnDelay);
+      }]);
+    };
 
-    return () => clearTimeout(spawnTimeout);
-  }, [gameState, turkeys.length]); // Only re-trigger when a turkey is successfully added
+    const spawnTimer = setInterval(createTurkey, spawnInterval);
+
+    return () => clearInterval(spawnTimer);
+  }, [gameState, timeLeft]);
 
   // Game timer
   useEffect(() => {
