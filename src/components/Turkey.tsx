@@ -27,6 +27,20 @@ export const Turkey = memo(({ turkey, onHit }: TurkeyProps) => {
     }
   }, [turkey.hit]);
 
+  // Get color filter based on turkey type
+  const getColorFilter = () => {
+    if (turkey.hit) return "contrast(150%) saturate(50%)";
+    
+    switch (turkey.type) {
+      case 'yellow':
+        return "drop-shadow(2px 2px 4px rgba(0,0,0,0.4)) sepia(100%) saturate(300%) brightness(120%) hue-rotate(10deg)";
+      case 'green':
+        return "drop-shadow(2px 2px 4px rgba(0,0,0,0.4)) sepia(100%) saturate(200%) brightness(90%) hue-rotate(60deg)";
+      default:
+        return "drop-shadow(2px 2px 4px rgba(0,0,0,0.4))";
+    }
+  };
+
   return (
     <>
       <div
@@ -38,7 +52,7 @@ export const Turkey = memo(({ turkey, onHit }: TurkeyProps) => {
         style={{
           left: `${turkey.x}px`,
           top: `${turkey.y}px`,
-          filter: turkey.hit ? "contrast(150%) saturate(50%)" : "drop-shadow(2px 2px 4px rgba(0,0,0,0.4))",
+          filter: getColorFilter(),
           transform: turkey.direction === 'left' || turkey.direction === 'diagonal-up' && turkey.x > window.innerWidth / 2 || turkey.direction === 'diagonal-down' && turkey.x > window.innerWidth / 2 
             ? "scaleX(-1)" 
             : "scaleX(1)",

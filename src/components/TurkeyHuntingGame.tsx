@@ -13,6 +13,8 @@ export interface TurkeyType {
   speed: number;
   direction: 'left' | 'right' | 'up' | 'down' | 'diagonal-up' | 'diagonal-down';
   hit: boolean;
+  type: 'normal' | 'yellow' | 'green';
+  sinWaveOffset?: number; // For green turkeys
 }
 
 export const TurkeyHuntingGame = () => {
@@ -31,9 +33,9 @@ export const TurkeyHuntingGame = () => {
     if (gameState !== "playing") return;
 
     let cancelled = false;
-    let timeoutId: number | undefined;
+    const timeoutIds: number[] = [];
 
-    const createTurkey = () => {
+    const createTurkey = (type: 'normal' | 'yellow' | 'green') => {
       const directions = ['left', 'right', 'up', 'down', 'diagonal-up', 'diagonal-down'] as const;
       const direction = directions[Math.floor(Math.random() * directions.length)];
       
@@ -67,46 +69,67 @@ export const TurkeyHuntingGame = () => {
           break;
       }
 
-      const newTurkey = {
-        id: Date.now() + Math.random(), // Unique ID
+      // Speed based on type
+      let speed: number;
+      if (type === 'yellow') {
+        speed = Math.random() * 1 + 2.5; // Super fast: 2.5-3.5
+      } else if (type === 'green') {
+        speed = Math.random() * 0.5 + 2; // Fast: 2-2.5
+      } else {
+        speed = Math.random() * 1.5 + 0.8; // Normal: 0.8-2.3
+      }
+
+      const newTurkey: TurkeyType = {
+        id: Date.now() + Math.random(),
         x,
         y,
-        speed: Math.random() * 1.5 + 0.8,
+        speed,
         direction,
         hit: false,
+        type,
+        sinWaveOffset: type === 'green' ? Math.random() * Math.PI * 2 : undefined,
       };
       
       console.log('Spawning turkey:', newTurkey);
       setTurkeys(prev => [...prev, newTurkey]);
     };
 
-    const scheduleNext = () => {
-      if (cancelled) return;
-
-      // Determine turkeys per second based on current time remaining
-      const tl = timeLeftRef.current;
-      let turkeysPerSecond = 0.5;
-      if (tl > 50) turkeysPerSecond = 0.5;    // First 10s: 0.5 per second
-      else if (tl > 40) turkeysPerSecond = 1; // Next 10s: 1 per second
-      else if (tl > 30) turkeysPerSecond = 1.5; // Next 10s: 1.5 per second
-      else turkeysPerSecond = 3;                    // Final 30s: 3 per second
-
-      const delay = 1000 / turkeysPerSecond;
-
-      timeoutId = window.setTimeout(() => {
+    const scheduleSpawns = (turkeyType: 'normal' | 'yellow' | 'green', perSecond: number) => {
+      const delay = 1000 / perSecond;
+      
+      const spawn = () => {
         if (cancelled) return;
-        createTurkey();
-        scheduleNext();
-      }, delay);
+        createTurkey(turkeyType);
+        const id = window.setTimeout(spawn, delay);
+        timeoutIds.push(id);
+      };
+      
+      const id = window.setTimeout(spawn, delay);
+      timeoutIds.push(id);
     };
 
-    scheduleNext();
+    // Determine spawn rates based on time remaining
+    const tl = timeLeftRef.current;
+    
+    if (tl > 40) {
+      // First 20 seconds: Normal at 1/sec
+      scheduleSpawns('normal', 1);
+    } else if (tl > 20) {
+      // Next 20 seconds: Normal at 1/sec + Yellow at 0.5/sec
+      scheduleSpawns('normal', 1);
+      scheduleSpawns('yellow', 0.5);
+    } else {
+      // Last 20 seconds: Normal at 2/sec + Yellow at 0.5/sec + Green at 0.5/sec
+      scheduleSpawns('normal', 2);
+      scheduleSpawns('yellow', 0.5);
+      scheduleSpawns('green', 0.5);
+    }
 
     return () => {
       cancelled = true;
-      if (timeoutId) clearTimeout(timeoutId);
+      timeoutIds.forEach(id => clearTimeout(id));
     };
-  }, [gameState]);
+  }, [gameState, timeLeft]);
 
 
   // Game timer
@@ -133,9 +156,12 @@ export const TurkeyHuntingGame = () => {
     // Cache window dimensions to avoid repeated property access
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    const buffer = 150; // Buffer to accommodate spawn at 100px and ensure prompt despawn
+    const buffer = 150;
+    let frameCount = 0;
 
     const moveInterval = setInterval(() => {
+      frameCount++;
+      
       setTurkeys(prev => {
         const updated: TurkeyType[] = [];
         
@@ -172,6 +198,13 @@ export const TurkeyHuntingGame = () => {
               newX += turkey.x < screenWidth / 2 ? speedDiag : -speedDiag;
               newY += speedDiag;
               break;
+          }
+          
+          // Green turkey sin wave movement
+          if (turkey.type === 'green' && turkey.sinWaveOffset !== undefined) {
+            const amplitude = 50; // Height of sin wave
+            const frequency = 0.05; // How tight the wave is
+            newY += Math.sin((frameCount * frequency) + turkey.sinWaveOffset) * amplitude * 0.1;
           }
           
           // Only keep if still on screen (with buffer for spawn positions)
