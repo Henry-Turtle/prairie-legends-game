@@ -28,12 +28,11 @@ export const TurkeyHuntingGame = () => {
     if (gameState !== "playing") return;
 
     // Determine turkeys per second based on time remaining
-    let turkeysPerSecond = 1;
-    if (timeLeft > 50) turkeysPerSecond = 1;      // First 10s: 1 per second
-    else if (timeLeft > 40) turkeysPerSecond = 2; // Next 10s: 2 per second
-    else if (timeLeft > 30) turkeysPerSecond = 3; // Next 10s: 3 per second
-    else if (timeLeft > 20) turkeysPerSecond = 4; // Next 10s: 4 per second
-    else turkeysPerSecond = 5;                    // Final 20s: 5 per second
+    let turkeysPerSecond = 0.5;
+    if (timeLeft > 50) turkeysPerSecond = 0.5;    // First 10s: 0.5 per second
+    else if (timeLeft > 40) turkeysPerSecond = 1; // Next 10s: 1 per second
+    else if (timeLeft > 30) turkeysPerSecond = 1.5; // Next 10s: 1.5 per second
+    else turkeysPerSecond = 3;                    // Final 30s: 3 per second
 
     const spawnInterval = 1000 / turkeysPerSecond;
 
