@@ -23,11 +23,17 @@ export const TurkeyHuntingGame = () => {
   const [turkeyIdCounter, setTurkeyIdCounter] = useState(0);
   const [shootAnimation, setShootAnimation] = useState(false);
 
-  // Spawn turkeys at random intervals
+  // Spawn turkeys at random intervals - increases as game progresses
   useEffect(() => {
     if (gameState !== "playing") return;
 
-    const spawnInterval = setInterval(() => {
+    // Calculate spawn delay based on time remaining (gets faster as time decreases)
+    const progressRatio = timeLeft / 60; // 1.0 at start, 0.0 at end
+    const baseDelay = 600 + (progressRatio * 1400); // 2000ms at start, 600ms at end
+    const randomVariation = Math.random() * 400; // Add some randomness
+    const spawnDelay = baseDelay + randomVariation;
+
+    const spawnTimeout = setTimeout(() => {
       const directions = ['left', 'right', 'up', 'down', 'diagonal-up', 'diagonal-down'] as const;
       const direction = directions[Math.floor(Math.random() * directions.length)];
       
@@ -71,10 +77,10 @@ export const TurkeyHuntingGame = () => {
       };
       setTurkeys(prev => [...prev, newTurkey]);
       setTurkeyIdCounter(prev => prev + 1);
-    }, Math.random() * 1000 + 600); // Spawn every 0.6-1.6 seconds
+    }, spawnDelay);
 
-    return () => clearInterval(spawnInterval);
-  }, [gameState, turkeyIdCounter]);
+    return () => clearTimeout(spawnTimeout);
+  }, [gameState, turkeyIdCounter, timeLeft]);
 
   // Game timer
   useEffect(() => {
