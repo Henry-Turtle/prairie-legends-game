@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { TurkeyType } from "./TurkeyHuntingGame";
 import { AnimatedTurkey } from "./AnimatedTurkey";
 
@@ -7,7 +7,7 @@ interface TurkeyProps {
   onHit: (turkeyId: number) => void;
 }
 
-export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
+export const Turkey = memo(({ turkey, onHit }: TurkeyProps) => {
   const [hitEffect, setHitEffect] = useState(false);
 
   const handleClick = (event: React.MouseEvent) => {
@@ -77,4 +77,4 @@ export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
       )}
     </>
   );
-};
+});

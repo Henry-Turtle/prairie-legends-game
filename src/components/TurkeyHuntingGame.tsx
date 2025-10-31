@@ -103,14 +103,21 @@ export const TurkeyHuntingGame = () => {
     return () => clearInterval(timer);
   }, [gameState]);
 
-  // Move turkeys and remove off-screen ones
+  // Move turkeys and remove off-screen ones - optimized for performance
   useEffect(() => {
     if (gameState !== "playing") return;
 
     const moveInterval = setInterval(() => {
-      setTurkeys(prev => 
-        prev
+      setTurkeys(prev => {
+        // Limit max turkeys on screen for performance
+        const maxTurkeys = 20;
+        const activeTurkeys = prev.filter(t => !t.hit);
+        
+        return prev
           .map(turkey => {
+            // Skip movement calculations for hit turkeys (they'll be removed)
+            if (turkey.hit) return turkey;
+            
             let newX = turkey.x;
             let newY = turkey.y;
             
@@ -139,15 +146,21 @@ export const TurkeyHuntingGame = () => {
             
             return { ...turkey, x: newX, y: newY };
           })
-          .filter(turkey => 
-            turkey.x > -200 && 
-            turkey.x < window.innerWidth + 200 && 
-            turkey.y > -200 && 
-            turkey.y < window.innerHeight + 200 && 
-            !turkey.hit
-          )
-      );
-    }, 16); // ~60fps
+          .filter(turkey => {
+            // Remove hit turkeys immediately
+            if (turkey.hit) return false;
+            
+            // Remove turkeys that are off-screen (with smaller buffer)
+            if (turkey.x < -150 || turkey.x > window.innerWidth + 150 || 
+                turkey.y < -150 || turkey.y > window.innerHeight + 150) {
+              return false;
+            }
+            
+            return true;
+          })
+          .slice(-maxTurkeys); // Keep only the most recent turkeys if over limit
+      });
+    }, 20); // Slightly lower frame rate (50fps) for better performance
 
     return () => clearInterval(moveInterval);
   }, [gameState]);
