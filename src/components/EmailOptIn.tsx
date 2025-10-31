@@ -5,7 +5,8 @@ import { Label } from "./ui/label";
 import { z } from "zod";
 import prairieLegendsLogo from "../assets/prairie-legends-logo.png";
 
-const emailSchema = z.object({
+const formSchema = z.object({
+  fullName: z.string().trim().min(1, "Full name is required").max(100, "Name must be less than 100 characters"),
   email: z.string().email("Please enter a valid email address").min(1, "Email is required")
 });
 
@@ -14,18 +15,24 @@ interface EmailOptInProps {
 }
 
 export const EmailOptIn = ({ onComplete }: EmailOptInProps) => {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState<{ fullName?: string; email?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setErrors({});
     
-    const result = emailSchema.safeParse({ email });
+    const result = formSchema.safeParse({ fullName, email });
     
     if (!result.success) {
-      setError(result.error.errors[0].message);
+      const fieldErrors: { fullName?: string; email?: string } = {};
+      result.error.errors.forEach((err) => {
+        const field = err.path[0] as "fullName" | "email";
+        fieldErrors[field] = err.message;
+      });
+      setErrors(fieldErrors);
       return;
     }
     
@@ -63,6 +70,23 @@ export const EmailOptIn = ({ onComplete }: EmailOptInProps) => {
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="text-left">
+              <Label htmlFor="fullName" className="text-gray-700">
+                Full Name
+              </Label>
+              <Input
+                id="fullName"
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="John Doe"
+                className="mt-1"
+              />
+              {errors.fullName && (
+                <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
+              )}
+            </div>
+            
+            <div className="text-left">
               <Label htmlFor="email" className="text-gray-700">
                 Email Address
               </Label>
@@ -74,8 +98,8 @@ export const EmailOptIn = ({ onComplete }: EmailOptInProps) => {
                 placeholder="hunter@example.com"
                 className="mt-1"
               />
-              {error && (
-                <p className="text-red-500 text-sm mt-1">{error}</p>
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
               )}
             </div>
             

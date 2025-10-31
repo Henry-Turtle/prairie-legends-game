@@ -178,6 +178,14 @@ export const TurkeyHuntingGame = () => {
     setGameState("menu");
   };
 
+  const handleReset = () => {
+    setGameState("emailOptIn");
+    setScore(0);
+    setTimeLeft(60);
+    setTurkeys([]);
+    setTurkeyIdCounter(0);
+  };
+
   if (gameState === "emailOptIn") {
     return <EmailOptIn onComplete={handleEmailOptInComplete} />;
   }
@@ -222,7 +230,7 @@ export const TurkeyHuntingGame = () => {
     >
       <SimpleBackground />
       
-      <GameUI score={score} timeLeft={timeLeft} />
+      <GameUI score={score} timeLeft={timeLeft} onReset={handleReset} />
       
       {turkeys.map(turkey => (
         <Turkey
