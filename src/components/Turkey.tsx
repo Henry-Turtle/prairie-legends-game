@@ -10,8 +10,9 @@ interface TurkeyProps {
 export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
   const [hitEffect, setHitEffect] = useState(false);
 
-  const handleClick = (event: React.MouseEvent) => {
+  const handlePointerDown = (event: React.PointerEvent) => {
     event.stopPropagation();
+    event.preventDefault();
     if (!turkey.hit) {
       onHit(turkey.id);
       setHitEffect(true);
@@ -61,7 +62,7 @@ export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
           filter: colorFilter,
           transform: `translate(${turkey.x}px, ${turkey.y}px) scaleX(${shouldFlip ? -1 : 1})`,
         }}
-        onClick={handleClick}
+        onPointerDown={handlePointerDown}
       >
         <AnimatedTurkey
           isRunning={true}

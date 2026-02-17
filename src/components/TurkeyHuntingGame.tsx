@@ -25,7 +25,6 @@ export const TurkeyHuntingGame = () => {
   const [gameState, setGameState] = useState<"emailOptIn" | "menu" | "playing" | "gameOver">("emailOptIn");
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
-  const [shootAnimation, setShootAnimation] = useState(false);
   const [renderTick, setRenderTick] = useState(0);
 
   const turkeysRef = useRef<TurkeyType[]>([]);
@@ -34,19 +33,10 @@ export const TurkeyHuntingGame = () => {
   const animFrameRef = useRef(0);
   const lastTimeRef = useRef(0);
   const frameCountRef = useRef(0);
-  const shootTimeoutRef = useRef<number | null>(null);
   const gameContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { timeLeftRef.current = timeLeft; }, [timeLeft]);
 
-  // Clean up shoot timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (shootTimeoutRef.current !== null) {
-        clearTimeout(shootTimeoutRef.current);
-      }
-    };
-  }, []);
 
   // Spawn turkeys based on time remaining - increases as game progresses
   useEffect(() => {
@@ -315,25 +305,12 @@ export const TurkeyHuntingGame = () => {
       t.hitTime = performance.now();
       const points = t.type === 'green' ? 50 : t.type === 'yellow' ? 20 : 10;
       setScore(prev => prev + points);
-      triggerShootAnimation();
     }
-  }, []);
-
-  const triggerShootAnimation = useCallback(() => {
-    setShootAnimation(true);
-    if (shootTimeoutRef.current !== null) {
-      clearTimeout(shootTimeoutRef.current);
-    }
-    shootTimeoutRef.current = window.setTimeout(() => {
-      setShootAnimation(false);
-      shootTimeoutRef.current = null;
-    }, 1000);
   }, []);
 
   const handleGameClick = (event: React.MouseEvent) => {
     if (gameState !== "playing") return;
     console.log(`[CLICK] pos=(${event.clientX},${event.clientY}) screen=(${window.innerWidth},${window.innerHeight})`);
-    triggerShootAnimation();
   };
 
   const handleEmailOptInComplete = () => {
@@ -390,10 +367,6 @@ export const TurkeyHuntingGame = () => {
         onClick={handleGameClick}
         style={{ cursor: "crosshair" }}
       >
-        {shootAnimation && (
-          <div className="fixed inset-0 pointer-events-none z-50 animate-crosshair-shoot"
-               style={{ mixBlendMode: "color-dodge" }} />
-        )}
         <SimpleBackground />
 
         <GameUI score={score} timeLeft={timeLeft} onReset={handleReset} />
