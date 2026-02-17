@@ -7,8 +7,6 @@ interface TurkeyProps {
   onHit: (turkeyId: number) => void;
 }
 
-const halfScreenWidth = window.innerWidth / 2;
-
 export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
   const [hitEffect, setHitEffect] = useState(false);
 
@@ -43,9 +41,10 @@ export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
     }
   }, [turkey.hit, turkey.type]);
 
+  const halfWidth = window.innerWidth / 2;
   const shouldFlip = turkey.direction === 'left' ||
-    (turkey.direction === 'diagonal-up' && turkey.x > halfScreenWidth) ||
-    (turkey.direction === 'diagonal-down' && turkey.x > halfScreenWidth);
+    (turkey.direction === 'diagonal-up' && turkey.x > halfWidth) ||
+    (turkey.direction === 'diagonal-down' && turkey.x > halfWidth);
 
   return (
     <>
@@ -80,7 +79,7 @@ export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
             transform: `translate(${turkey.x + 20}px, ${turkey.y - 10}px)`,
           }}
         >
-          +10
+          +{turkey.type === 'green' ? 50 : turkey.type === 'yellow' ? 20 : 10}
         </div>
       )}
 

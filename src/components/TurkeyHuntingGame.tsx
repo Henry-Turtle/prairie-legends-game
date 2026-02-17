@@ -35,6 +35,7 @@ export const TurkeyHuntingGame = () => {
   const lastTimeRef = useRef(0);
   const frameCountRef = useRef(0);
   const shootTimeoutRef = useRef<number | null>(null);
+  const gameContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { timeLeftRef.current = timeLeft; }, [timeLeft]);
 
@@ -59,8 +60,9 @@ export const TurkeyHuntingGame = () => {
       const directions = ['left', 'right', 'up', 'down', 'diagonal-up', 'diagonal-down'] as const;
       const direction = directions[Math.floor(Math.random() * directions.length)];
 
-      const screenWidth = window.innerWidth;
-      const screenHeight = window.innerHeight;
+      const container = gameContainerRef.current;
+      const screenWidth = container ? container.clientWidth : window.innerWidth;
+      const screenHeight = container ? container.clientHeight : window.innerHeight;
       let x: number, y: number;
 
       // Spawn from different edges based on direction
@@ -96,7 +98,7 @@ export const TurkeyHuntingGame = () => {
       if (type === 'yellow') {
         speed = Math.random() * 1 + 2.5; // Super fast: 2.5-3.5
       } else if (type === 'green') {
-        speed = Math.random() * 1 + 3.5; // Fast: 3.5-4.5
+        speed = Math.random() * 0.8 + 2.5; // Fast: 2.5-3.3
       } else {
         speed = Math.random() * 1.5 + 0.8; // Normal: 0.8-2.3
       }
@@ -198,9 +200,10 @@ export const TurkeyHuntingGame = () => {
     lastTimeRef.current = 0;
 
     const tick = (timestamp: number) => {
-      // Read screen dimensions every frame to handle zoom/resize
-      const screenWidth = window.innerWidth;
-      const screenHeight = window.innerHeight;
+      // Read actual container dimensions every frame to handle zoom/resize/scaling
+      const container = gameContainerRef.current;
+      const screenWidth = container ? container.clientWidth : window.innerWidth;
+      const screenHeight = container ? container.clientHeight : window.innerHeight;
       if (!lastTimeRef.current) {
         lastTimeRef.current = timestamp;
       }
@@ -264,7 +267,7 @@ export const TurkeyHuntingGame = () => {
 
         // Green turkey sine wave: oscillate perpendicular to movement
         if (turkey.type === 'green' && turkey.sinTravelDist !== undefined) {
-          const amplitude = 350;
+          const amplitude = 175;
           const frequency = 0.035;
           turkey.sinTravelDist! += turkey.speed * dt;
           const sineOffset = Math.sin(turkey.sinTravelDist! * frequency + turkey.sinWaveOffset!) * amplitude;
@@ -310,7 +313,8 @@ export const TurkeyHuntingGame = () => {
     if (t && !t.hit) {
       t.hit = true;
       t.hitTime = performance.now();
-      setScore(prev => prev + 10);
+      const points = t.type === 'green' ? 50 : t.type === 'yellow' ? 20 : 10;
+      setScore(prev => prev + points);
       triggerShootAnimation();
     }
   }, []);
@@ -328,6 +332,7 @@ export const TurkeyHuntingGame = () => {
 
   const handleGameClick = (event: React.MouseEvent) => {
     if (gameState !== "playing") return;
+    console.log(`[CLICK] pos=(${event.clientX},${event.clientY}) screen=(${window.innerWidth},${window.innerHeight})`);
     triggerShootAnimation();
   };
 
@@ -380,6 +385,7 @@ export const TurkeyHuntingGame = () => {
   return (
     <AnimationFrameProvider>
       <div
+        ref={gameContainerRef}
         className="min-h-screen bg-gradient-sky overflow-hidden relative"
         onClick={handleGameClick}
         style={{ cursor: "crosshair" }}
