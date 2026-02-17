@@ -51,7 +51,7 @@ export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
       <div
         className={`absolute cursor-crosshair transition-[opacity,filter] duration-300 ${
           turkey.hit
-            ? "opacity-70 scale-90"
+            ? "opacity-70 scale-90 pointer-events-none"
             : "hover:scale-110 hover:brightness-110"
         }`}
         style={{
