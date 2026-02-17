@@ -88,7 +88,7 @@ export const TurkeyHuntingGame = () => {
       if (type === 'yellow') {
         speed = Math.random() * 1 + 2.5; // Super fast: 2.5-3.5
       } else if (type === 'green') {
-        speed = Math.random() * 0.8 + 2.5; // Fast: 2.5-3.3
+        speed = Math.random() * 0.56 + 1.75; // Fast: 1.75-2.31
       } else {
         speed = Math.random() * 1.5 + 0.8; // Normal: 0.8-2.3
       }
