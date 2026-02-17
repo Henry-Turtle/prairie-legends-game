@@ -1,4 +1,4 @@
-import { useEffect, useState, memo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { TurkeyType } from "./TurkeyHuntingGame";
 import { AnimatedTurkey } from "./AnimatedTurkey";
 
@@ -7,7 +7,9 @@ interface TurkeyProps {
   onHit: (turkeyId: number) => void;
 }
 
-export const Turkey = memo(({ turkey, onHit }: TurkeyProps) => {
+const halfScreenWidth = window.innerWidth / 2;
+
+export const Turkey = ({ turkey, onHit }: TurkeyProps) => {
   const [hitEffect, setHitEffect] = useState(false);
 
   const handleClick = (event: React.MouseEvent) => {
@@ -27,10 +29,10 @@ export const Turkey = memo(({ turkey, onHit }: TurkeyProps) => {
     }
   }, [turkey.hit]);
 
-  // Get color filter based on turkey type
-  const getColorFilter = () => {
+  // Memoize color filter based on hit status and type
+  const colorFilter = useMemo(() => {
     if (turkey.hit) return "contrast(150%) saturate(50%)";
-    
+
     switch (turkey.type) {
       case 'yellow':
         return "drop-shadow(2px 2px 4px rgba(0,0,0,0.4)) sepia(100%) saturate(300%) brightness(120%) hue-rotate(10deg)";
@@ -39,51 +41,56 @@ export const Turkey = memo(({ turkey, onHit }: TurkeyProps) => {
       default:
         return "drop-shadow(2px 2px 4px rgba(0,0,0,0.4))";
     }
-  };
+  }, [turkey.hit, turkey.type]);
+
+  const shouldFlip = turkey.direction === 'left' ||
+    (turkey.direction === 'diagonal-up' && turkey.x > halfScreenWidth) ||
+    (turkey.direction === 'diagonal-down' && turkey.x > halfScreenWidth);
 
   return (
     <>
       <div
-        className={`absolute cursor-crosshair transition-all duration-300 ${
-          turkey.hit 
-            ? "opacity-70 scale-90" 
+        className={`absolute cursor-crosshair transition-[opacity,filter] duration-300 ${
+          turkey.hit
+            ? "opacity-70 scale-90"
             : "hover:scale-110 hover:brightness-110"
         }`}
         style={{
-          left: `${turkey.x}px`,
-          top: `${turkey.y}px`,
-          filter: getColorFilter(),
-          transform: turkey.direction === 'left' || turkey.direction === 'diagonal-up' && turkey.x > window.innerWidth / 2 || turkey.direction === 'diagonal-down' && turkey.x > window.innerWidth / 2 
-            ? "scaleX(-1)" 
-            : "scaleX(1)",
+          left: 0,
+          top: 0,
+          willChange: 'transform',
+          filter: colorFilter,
+          transform: `translate(${turkey.x}px, ${turkey.y}px) scaleX(${shouldFlip ? -1 : 1})`,
         }}
         onClick={handleClick}
       >
-        <AnimatedTurkey 
-          isRunning={true} 
+        <AnimatedTurkey
+          isRunning={true}
           isHit={turkey.hit}
           scale={1.2}
         />
       </div>
-      
+
       {hitEffect && (
         <div
           className="absolute pointer-events-none animate-score-popup font-bold text-2xl bg-gradient-score bg-clip-text text-transparent"
           style={{
-            left: `${turkey.x + 20}px`,
-            top: `${turkey.y - 10}px`,
+            left: 0,
+            top: 0,
+            transform: `translate(${turkey.x + 20}px, ${turkey.y - 10}px)`,
           }}
         >
           +10
         </div>
       )}
-      
+
       {turkey.hit && (
         <div
           className="absolute pointer-events-none animate-score-popup"
           style={{
-            left: `${turkey.x + 15}px`,
-            top: `${turkey.y + 10}px`,
+            left: 0,
+            top: 0,
+            transform: `translate(${turkey.x + 15}px, ${turkey.y + 10}px)`,
           }}
         >
           <span className="text-2xl">💥</span>
@@ -91,4 +98,4 @@ export const Turkey = memo(({ turkey, onHit }: TurkeyProps) => {
       )}
     </>
   );
-});
+};

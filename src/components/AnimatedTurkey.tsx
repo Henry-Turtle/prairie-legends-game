@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { memo } from "react";
+import { useAnimationFrame } from "./AnimationFrameContext";
 
 interface AnimatedTurkeyProps {
   isRunning?: boolean;
@@ -6,18 +7,9 @@ interface AnimatedTurkeyProps {
   scale?: number;
 }
 
-export const AnimatedTurkey = ({ isRunning = false, isHit = false, scale = 1 }: AnimatedTurkeyProps) => {
-  const [frame, setFrame] = useState(0);
-
-  useEffect(() => {
-    if (isHit) return;
-    
-    const interval = setInterval(() => {
-      setFrame(prev => (prev + 1) % (isRunning ? 4 : 2));
-    }, isRunning ? 150 : 800);
-
-    return () => clearInterval(interval);
-  }, [isRunning, isHit]);
+export const AnimatedTurkey = memo(({ isRunning = false, isHit = false, scale = 1 }: AnimatedTurkeyProps) => {
+  const globalFrame = useAnimationFrame();
+  const frame = isHit ? 0 : globalFrame % (isRunning ? 4 : 2);
 
   const getBodyOffset = () => {
     if (!isRunning) return frame === 0 ? 0 : -1;
@@ -55,7 +47,7 @@ export const AnimatedTurkey = ({ isRunning = false, isHit = false, scale = 1 }: 
         stroke="#654321"
         strokeWidth="1"
       />
-      
+
       {/* Turkey Chest */}
       <ellipse
         cx="32"
@@ -64,7 +56,7 @@ export const AnimatedTurkey = ({ isRunning = false, isHit = false, scale = 1 }: 
         ry="8"
         fill="#A0522D"
       />
-      
+
       {/* Turkey Head */}
       <circle
         cx="32"
@@ -74,7 +66,7 @@ export const AnimatedTurkey = ({ isRunning = false, isHit = false, scale = 1 }: 
         stroke="#B8860B"
         strokeWidth="1"
       />
-      
+
       {/* Beak */}
       <polygon
         points={`40,${20 + getBodyOffset()} 46,${22 + getBodyOffset()} 40,${24 + getBodyOffset()}`}
@@ -82,7 +74,7 @@ export const AnimatedTurkey = ({ isRunning = false, isHit = false, scale = 1 }: 
         stroke="#FFA500"
         strokeWidth="0.5"
       />
-      
+
       {/* Wattle (the red thing under beak) */}
       <ellipse
         cx="32"
@@ -91,7 +83,7 @@ export const AnimatedTurkey = ({ isRunning = false, isHit = false, scale = 1 }: 
         ry="5"
         fill="#DC143C"
       />
-      
+
       {/* Eye */}
       <circle
         cx="36"
@@ -105,7 +97,7 @@ export const AnimatedTurkey = ({ isRunning = false, isHit = false, scale = 1 }: 
         r="0.8"
         fill="#FFF"
       />
-      
+
       {/* Tail Feathers */}
       <g transform={`translate(32, ${36 + getBodyOffset()}) rotate(${getWingRotation()})`}>
         <path
@@ -127,7 +119,7 @@ export const AnimatedTurkey = ({ isRunning = false, isHit = false, scale = 1 }: 
           strokeWidth="0.5"
         />
       </g>
-      
+
       {/* Wings */}
       <g transform={`translate(32, ${30 + getBodyOffset()}) rotate(${getWingRotation() * 0.5})`}>
         <ellipse
@@ -147,7 +139,7 @@ export const AnimatedTurkey = ({ isRunning = false, isHit = false, scale = 1 }: 
           fill="#8B4513"
         />
       </g>
-      
+
       {/* Legs */}
       <g transform={`translate(0, ${getLegOffset()})`}>
         {/* Left Leg */}
@@ -167,7 +159,7 @@ export const AnimatedTurkey = ({ isRunning = false, isHit = false, scale = 1 }: 
           stroke="#FFA500"
           strokeWidth="0.5"
         />
-        
+
         {/* Right Leg */}
         <line
           x1="36"
@@ -186,7 +178,7 @@ export const AnimatedTurkey = ({ isRunning = false, isHit = false, scale = 1 }: 
           strokeWidth="0.5"
         />
       </g>
-      
+
       {/* Feather details */}
       <g opacity="0.6">
         <circle cx="28" cy={32 + getBodyOffset()} r="1.5" fill="#654321" />
@@ -195,4 +187,4 @@ export const AnimatedTurkey = ({ isRunning = false, isHit = false, scale = 1 }: 
       </g>
     </svg>
   );
-};
+});
